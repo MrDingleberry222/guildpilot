@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en" data-mode="showcase">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F1209">
+<title>GuildPilot: your server, set up before the first message</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Geist:wght@400;500;600&family=Instrument+Serif&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="bg" aria-hidden="true"><i class="a"></i><i class="b"></i><i class="c"></i></div>
+<nav class="nav" aria-label="Main"><a class="wordmark" href="./">GuildPilot</a><div><a class="t" href="/auth/login">Dashboard</a><a class="btn g" id="nav-invite" href="/auth/login">Add to Discord</a></div></nav>
+<main>
+<header class="hero"><div class="dust" aria-hidden="true"></div>
+<div class="w hg"><div>
+<h1><span>Your server,</span><span>set up before</span><span>the first message.</span></h1>
+<p class="lead">GuildPilot builds your channels and roles, welcomes new members, opens private tickets, moderates chat and rewards activity. One bot, one dashboard.</p>
+<div class="row"><a class="btn g" id="hero-invite" href="/auth/login">Add to Discord</a><a class="btn o" href="#setup">See how setup works</a></div></div>
+<div class="stage" aria-hidden="true">
+<div class="pl p0" data-d=".15"><b class="hash">#</b></div>
+<div class="pl p1" data-d=".5"><div class="card"><h3>Pixel Pals</h3><ul class="mono"><li># general</li><li style="opacity:.5">no roles yet</li></ul></div></div>
+<div class="pl p2" data-d="1.1"><span class="chip" style="right:40px;top:70px">Member</span><span class="chip a" style="left:10px;bottom:90px">Moderator</span><span class="chip" style="right:120px;bottom:40px"># support</span></div>
+</div></div></header>
+
+<section id="workspace" class="workspace hidden"><div class="w">
+<div class="section-heading"><div><div class="eyebrow">YOUR CONTROL ROOM</div><h2>Pick a server to tune.</h2></div><button id="refresh-servers" class="refresh" type="button" aria-label="Refresh servers">↻</button></div>
+<p id="dashboard-mode" class="mono" aria-live="polite"></p>
+<div id="server-list" class="server-list"></div>
+<section id="settings-panel" class="settings-panel hidden">
+<div class="settings-title"><div><div class="eyebrow">SERVER SETTINGS</div><h3 id="selected-server-name"></h3></div><span id="save-status" class="save-status" aria-live="polite"></span></div>
+<div class="settings-grid">
+<label class="field full-field"><span>Welcome channel</span><select id="welcome-channel"></select></label>
+<label class="field full-field"><span>Welcome message</span><textarea id="welcome-message" maxlength="500" rows="3"></textarea><small>Use {user}, {server}, and {memberCount} to personalize it.</small></label>
+<label class="toggle-card"><span><strong>Welcome messages</strong><small>Greet new members in your selected channel.</small></span><input id="welcome-enabled" type="checkbox"><i></i></label>
+<label class="toggle-card"><span><strong>Levels & XP</strong><small>Reward active members for chatting.</small></span><input id="leveling-enabled" type="checkbox"><i></i></label>
+<label class="toggle-card"><span><strong>Anti-spam</strong><small>Timeout message floods automatically.</small></span><input id="antispam-enabled" type="checkbox"><i></i></label>
+</div>
+<button id="save-settings" class="btn g" type="button">Save changes</button>
+</section><div id="dashboard-error" class="error-message hidden" role="alert"></div>
+</div></section>
+
+<section id="setup" class="pin" style="height:340vh"><div class="sticky"><div class="w sg">
+<div class="tw"><i class="pilot" aria-hidden="true"></i><ul class="tree" id="tree">
+<li>@ Member</li><li>@ Moderator</li>
+<li class="cat">WELCOME</li><li># welcome</li><li># rules</li><li># announcements</li>
+<li class="cat">COMMUNITY</li><li id="gen"># general</li><li># introductions</li>
+<li class="cat">SUPPORT</li><li># support</li></ul></div>
+<div class="st2"><h2>Run setup once.</h2>
+<p class="d">GuildPilot creates the Member and Moderator roles and the WELCOME, COMMUNITY and SUPPORT categories with their channels. Anything that already exists is skipped.</p>
+<p class="mono" id="cnt" aria-live="polite"></p></div>
+</div></div></section>
+
+<section id="pan" style="height:260vh"><div class="sticky"><h2>Keep it calm.</h2>
+<div class="track" id="track">
+<article class="pc"><code>/timeout</code><p>Up to 28 days, with a reason. GuildPilot checks moderator and bot role permissions first.</p></article>
+<article class="pc"><code>/clear</code><p>Removes up to 100 recent messages in one go.</p></article>
+<article class="pc"><code>Anti-spam</code><p>Message floods get a 60-second timeout, when permissions allow. Optional.</p></article>
+<article class="pc"><code>/level</code><p>Chatting earns XP, with a cooldown. Members check their level any time.</p></article>
+</div></div></section>
+
+<section id="close" class="close"><h2>Add GuildPilot to your server.</h2>
+<div class="row" style="justify-content:center"><a class="btn g" id="footer-invite" href="/auth/login">Add to Discord</a><a class="btn o" href="/auth/login">Open the dashboard</a></div>
+<p class="mono road">Planned, not included yet: reaction roles, backups and AI-assisted server planning.</p></section>
+</main>
+<footer class="mono">GuildPilot</footer>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="app.js" defer></script>
+</body>
+</html>
