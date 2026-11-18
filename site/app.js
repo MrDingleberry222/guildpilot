@@ -6,6 +6,154 @@ const staticShowcase = document.documentElement.dataset.mode === "showcase";
 let selectedGuildId = null;
 let inviteUrl = "";
 
+const serverProfiles = [
+  {
+    pattern: /\b(gam(e|ing|er|es)|minecraft|roblox|valorant|fortnite|gamer|esports)\b/i,
+    theme: "Gaming",
+    category: "GAME LOUNGE",
+    channels: ["game-chat", "looking-for-group", "clips-and-highlights"],
+    roles: ["Gamer", "Event Host"],
+  },
+  {
+    pattern: /\b(study|school|class(es)?|homework|university|college|student|learning)\b/i,
+    theme: "Study",
+    category: "STUDY HALL",
+    channels: ["study-chat", "homework-help", "resources"],
+    roles: ["Student", "Study Buddy"],
+  },
+  {
+    pattern: /\b(creator|stream(er|ing)?|youtube|twitch|content|artist|artwork|podcast)\b/i,
+    theme: "Creators",
+    category: "CREATOR STUDIO",
+    channels: ["content-drops", "feedback", "collaborations"],
+    roles: ["Creator", "Subscriber"],
+  },
+  {
+    pattern: /\b(shop|store|business|brand|customer|product|marketplace|client)\b/i,
+    theme: "Business",
+    category: "THE MARKET",
+    channels: ["product-updates", "customer-help", "showcase"],
+    roles: ["Customer", "VIP"],
+  },
+  {
+    pattern: /\b(anime|manga|fandom|cosplay|watch.?party)\b/i,
+    theme: "Fandom",
+    category: "FANDOM",
+    channels: ["fan-art", "theories", "watch-parties"],
+    roles: ["Fan", "Event Host"],
+  },
+];
+
+function createServerPlan(description) {
+  const cleanDescription = description.trim();
+  if (cleanDescription.length < 8 || cleanDescription.length > 1000) {
+    throw new Error("Describe your server in 8 to 1,000 characters.");
+  }
+  const matchedProfiles = serverProfiles
+    .filter(({ pattern }) => pattern.test(cleanDescription))
+    .slice(0, 2);
+  return {
+    themes: matchedProfiles.map(({ theme }) => theme),
+    categories: [
+      { name: "WELCOME", channels: ["welcome", "rules", "announcements"] },
+      { name: "COMMUNITY", channels: ["general", "introductions", "media"] },
+      { name: "SUPPORT", channels: ["help-and-support", "tickets"] },
+      ...matchedProfiles.map(({ category, channels }) => ({ name: category, channels })),
+    ],
+    roles: [...new Set(["Member", "Moderator", ...matchedProfiles.flatMap(({ roles }) => roles)])],
+  };
+}
+
+function renderServerPlan(plan) {
+  const preview = $("#server-plan");
+  preview.replaceChildren();
+  preview.classList.remove("hidden");
+
+  const heading = document.createElement("h3");
+  heading.textContent = plan.themes.length
+    ? `Suggested for ${plan.themes.join(" + ")}`
+    : "Suggested community layout";
+  preview.append(heading);
+
+  const categories = document.createElement("div");
+  categories.className = "plan-categories";
+  plan.categories.forEach((category) => {
+    const card = document.createElement("article");
+    card.className = "plan-category";
+    const title = document.createElement("strong");
+    title.textContent = category.name;
+    const channels = document.createElement("ul");
+    category.channels.forEach((channel) => {
+      const item = document.createElement("li");
+      item.textContent = `# ${channel}`;
+      channels.append(item);
+    });
+    card.append(title, channels);
+    categories.append(card);
+  });
+  preview.append(categories);
+
+  const roleHeading = document.createElement("h4");
+  roleHeading.textContent = "Roles";
+  const roles = document.createElement("p");
+  roles.textContent = plan.roles.join(" · ");
+  const note = document.createElement("small");
+  note.textContent = "The live builder creates new roles without extra permissions or assigning them to members.";
+  const planText = document.createElement("pre");
+  planText.id = "plan-copy";
+  planText.tabIndex = 0;
+  preview.append(roleHeading, roles, note, planText);
+
+  const serialized = [
+    ...plan.categories.flatMap((category) => [
+      `[${category.name}]`,
+      ...category.channels.map((channel) => `# ${channel}`),
+    ]),
+    "",
+    `Roles: ${plan.roles.join(", ")}`,
+  ].join("\n");
+  $("#plan-copy").textContent = serialized;
+  $("#copy-server-plan").disabled = false;
+}
+
+function setupServerBuilder() {
+  const generateButton = $("#generate-server-plan");
+  if (!generateButton) return;
+  const descriptionInput = $("#server-description");
+  const status = $("#builder-status");
+  const copyButton = $("#copy-server-plan");
+  const preview = $("#server-plan");
+
+  generateButton.addEventListener("click", () => {
+    try {
+      renderServerPlan(createServerPlan(descriptionInput.value));
+      status.textContent = "Preview ready. This showcase does not make changes to Discord.";
+    } catch (error) {
+      preview.replaceChildren();
+      preview.classList.add("hidden");
+      copyButton.disabled = true;
+      status.textContent = error.message;
+    }
+  });
+
+  descriptionInput.addEventListener("input", () => {
+    status.textContent = "";
+    preview.replaceChildren();
+    preview.classList.add("hidden");
+    copyButton.disabled = true;
+  });
+
+  copyButton.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText($("#plan-copy").textContent);
+      status.textContent = "Plan copied to clipboard.";
+    } catch {
+      status.textContent = "Clipboard access is unavailable. Select and copy the plan below.";
+      $("#plan-copy").focus();
+    }
+  });
+}
+
 function showToast(message) {
   const toast = $("#toast");
   toast.textContent = message;
@@ -235,9 +383,11 @@ async function initialize() {
     actionLinks.forEach((link) => {
       link.addEventListener("click", (event) => {
         event.preventDefault();
-        showToast(link.id.includes("invite")
-          ? "This public showcase is visual only. Connect GuildPilot to Discord to invite the bot."
-          : "The dashboard requires the GuildPilot app to be running with Discord credentials.");
+        showToast(link.id === "builder-live-link"
+          ? "Start the GuildPilot app with Discord credentials, then enter your description in its live dashboard to build this layout."
+          : link.id.includes("invite")
+            ? "This public showcase is visual only. Connect GuildPilot to Discord to invite the bot."
+            : "The dashboard requires the GuildPilot app to be running with Discord credentials.");
       });
     });
     return;
@@ -286,7 +436,8 @@ async function initialize() {
   }
 }
 
-$("#refresh-servers").addEventListener("click", loadServers);
-$("#save-settings").addEventListener("click", saveSettings);
+if ($("#refresh-servers")) $("#refresh-servers").addEventListener("click", loadServers);
+if ($("#save-settings")) $("#save-settings").addEventListener("click", saveSettings);
+setupServerBuilder();
 setupInteractions();
 initialize();

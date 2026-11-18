@@ -16,12 +16,26 @@
 <div class="w hg"><div>
 <h1><span>Your server,</span><span>set up before</span><span>the first message.</span></h1>
 <p class="lead">GuildPilot builds your channels and roles, welcomes new members, opens private tickets, moderates chat and rewards activity. One bot, one dashboard.</p>
-<div class="row"><a class="btn g" id="hero-invite" href="/auth/login">Add to Discord</a><a class="btn o" href="#setup">See how setup works</a></div></div>
+<div class="row"><a class="btn g" id="hero-invite" href="/auth/login">Add to Discord</a><a class="btn o" href="#builder">Build a server plan</a></div></div>
 <div class="stage" aria-hidden="true">
 <div class="pl p0" data-d=".15"><b class="hash">#</b></div>
 <div class="pl p1" data-d=".5"><div class="card"><h3>Pixel Pals</h3><ul class="mono"><li># general</li><li style="opacity:.5">no roles yet</li></ul></div></div>
 <div class="pl p2" data-d="1.1"><span class="chip" style="right:40px;top:70px">Member</span><span class="chip a" style="left:10px;bottom:90px">Moderator</span><span class="chip" style="right:120px;bottom:40px"># support</span></div>
 </div></div></header>
+
+<section id="builder" class="builder-section"><div class="w">
+<div class="eyebrow">YOUR COMMUNITY, YOUR WAY</div>
+<h2>Describe the server you want.</h2>
+<p class="builder-intro">Tell GuildPilot what your community is about. Preview a tailored set of categories, channels, and roles before setting it up.</p>
+<label class="builder-field" for="server-description"><span>What are you building?</span>
+<textarea id="server-description" maxlength="1000" rows="4" placeholder="A welcoming Minecraft community for sharing builds, finding people to play with, and joining events."></textarea>
+<small>8–1,000 characters. The preview uses built-in community templates.</small></label>
+<div class="builder-actions"><button id="generate-server-plan" class="btn g" type="button">Generate my plan</button><button id="copy-server-plan" class="btn o" type="button" disabled>Copy plan</button></div>
+<p id="builder-status" class="mono" aria-live="polite"></p>
+<div id="server-plan" class="server-plan hidden" aria-live="polite"></div>
+<p class="builder-note">This public site is a preview only. To create these items on Discord, run GuildPilot with Discord credentials and enter the same description in its live dashboard.</p>
+<a id="builder-live-link" class="btn o" href="/auth/login">Open the live dashboard</a>
+</div></section>
 
 <section id="workspace" class="workspace hidden"><div class="w">
 <div class="section-heading"><div><div class="eyebrow">YOUR CONTROL ROOM</div><h2>Pick a server to tune.</h2></div><button id="refresh-servers" class="refresh" type="button" aria-label="Refresh servers">↻</button></div>
